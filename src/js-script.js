@@ -1,18 +1,18 @@
+import relayrSDK from './relayr-browser-sdk.min.js';
+// import keys from './api-keys.js';
+
 //connect to cloud
-const RELAYR = //wherever the sdk comes from
+const RELAYR = relayrSDK;
 
-    RELAYR.init({
-        // this comes from the api key page on the dashboard
-        //TODO is it critical that it be called "id" instead of appID or something?
-        appId: keys.APP_ID,
-        // this identifies my website as a 'trusted user' basically- it expects me to show up and ask for access to stuff
-        redirectUri: "http://localhost:8080/front-page.html"
-    });
-
-RELAYR.authorize().then((currentUser) {
+RELAYR.init({
+    // this comes from the api key page on the dashboard
+    //it is important that these be called exactly  "redirectURI" and "id" 
+    id: "",
+    // this identifies my website as a 'trusted user' basically- it expects me to show up and ask for access to stuff
+    redirectURI: "http://localhost:3000/dist/front-page.html"
+});
+RELAYR.authorize().then((currentUser) => {
     //authorizing returns the current user, whose devices and other things you can now interact with
-
-    //define some variables to hold arrays derived from the user class, for further use in the specific classes 
     let allDevices;
     let allTransmitters;
 
@@ -21,42 +21,43 @@ RELAYR.authorize().then((currentUser) {
     currentUser.getUserInfo().then((response) => {
         //inject this text into the html
         $(".users").text(response.email);
-        userid = response.id;
     }).catch((err) => {
-        console.log("error, the promise was rejected");
+        console.log("error, the userInfo promise was rejected");
     });
 
     currentUser.getMyDevices().then((response) => {
-        allDevices = response;
+        // console.log(response);
         //inject this text into the html
-        for (x in response) {
-            // tack the object[index].name on to the list displayed in the html
-            $('<ul>').text(response[x].name).appendTo('.devices');
-        }
+        allDevices = response;
+        // tack the object[index].name on to the list displayed in the html
+        response.forEach((x) => {
+            $('<ul>').text(x.name).appendTo('.devices');
+        });
+
     }).catch((err) => {
-        console.log("error, the promise was rejected");
+        console.log("error, the getMyDevices promise was rejected");
     });
 
     currentUser.getMyGroups().then((response) => {
         //inject this text into the html
         // loops through the object holding the devices, x gives you an index
-        for (x in response) {
+        response.forEach((x) => {
             // tack the object[index].name on to the list displayed in the html
-            $('<ul>').text(response[x].name).appendTo('.groups');
-        }
-    }).catch((err) {
-        console.log("error, the promise was rejected")
+            $('<ul>').text(x.name).appendTo('.groups');
+        });
+    }).catch((err) => {
+        console.log("error, the getMyGroups promise was rejected")
     });
 
     currentUser.getMyTransmitters().then((response) => {
         allTransmitters = response;
         // loops through the object holding the devices, x gives you an index
-        for (x in response) {
+        response.forEach((x) => {
             // tack the object[index].name on to the list displayed in the html
-            $('<ul>').text(msg[x].name + " : " + msg[x].id).appendTo('.transmitterlist');
-        }
-    }).catch((err) {
-        console.log("error, the promise was rejected")
+            $('<ul>').text(x.name + " : " + x.id).appendTo('.transmitterlist');
+        });
+    }).catch((err) => {
+        console.log("error, the getMyTransmitters promise was rejected")
     });
 
     //DEVICE THINGS
@@ -70,7 +71,7 @@ RELAYR.authorize().then((currentUser) {
         $(".reading1").text(dev1);
     }).catch((err) => {
         //informs you if something went wrong
-        console.log("error, the promise was rejected");
+        console.log("error, the dev 1 readings promise was rejected");
     });
 
     // this gets the data from the second device
@@ -79,7 +80,7 @@ RELAYR.authorize().then((currentUser) {
         $(".reading2").text(dev1);
     }).catch((err) => {
         //informs you if something went wrong
-        console.log("error, the promise was rejected");
+        console.log("error, the dev 2 readingspromise was rejected");
     });
 
     //TRANSMITTER THINGS
@@ -91,7 +92,7 @@ RELAYR.authorize().then((currentUser) {
         location.reload();
     }).catch((err) => {
         //informs you if something went wrong
-        console.log("error, the promise was rejected");
+        console.log("error, the deleteTransmitter promise was rejected");
     });
 
     // update the first transmitter in the list
@@ -102,7 +103,7 @@ RELAYR.authorize().then((currentUser) {
         location.reload();
     }).catch((err) => {
         //informs you if something went wrong
-        console.log("error, the promise was rejected");
+        console.log("error, the updateTransmitter promise was rejected");
     });
 
 
