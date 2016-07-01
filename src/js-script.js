@@ -1,20 +1,24 @@
-import relayrSDK from './relayr-browser-sdk.min.js';
-// import keys from './api-keys.js';
+import relayrSDK, {
+    device, transmitter
+}
+from '../relayr-browser-sdk/dist/relayr-browser-sdk.min.js';
+
 
 //connect to cloud
 const RELAYR = relayrSDK;
 
+//init gives the api enough information to link this code to a specific project on the relayr cloud
 RELAYR.init({
     // this comes from the api key page on the dashboard
     //it is important that these be called exactly  "redirectURI" and "id" 
-    id: "",
+    //TODO figure out how to get sensitive data back into a seperate file 
+    id: "yourIdHere",
     // this identifies my website as a 'trusted user' basically- it expects me to show up and ask for access to stuff
     redirectURI: "http://localhost:3000/dist/front-page.html"
 });
+
+//authorizing redirects you to log in, and returns the current user, whose devices and other things you can then interact with
 RELAYR.authorize().then((currentUser) => {
-    //authorizing returns the current user, whose devices and other things you can now interact with
-    let allDevices;
-    let allTransmitters;
 
     //USER THINGS
     //TODO is it better to use this to keep the promise structure consistent, or just get the email property directly from the currentUser?
@@ -22,20 +26,36 @@ RELAYR.authorize().then((currentUser) => {
         //inject this text into the html
         $(".users").text(response.email);
     }).catch((err) => {
-        console.log("error, the userInfo promise was rejected");
+        console.log(err);
     });
 
+    //DEVICE THINGS
     currentUser.getMyDevices().then((response) => {
-        // console.log(response);
         //inject this text into the html
-        allDevices = response;
+        let allDevices = response;
         // tack the object[index].name on to the list displayed in the html
         response.forEach((x) => {
             $('<ul>').text(x.name).appendTo('.devices');
         });
 
+        //now that we have the list of devices, we can display the data from the first two
+        //set up the device instance
+
+        let deviceInstance1 = new device({
+            id: allDevices[0].id
+        }, {
+            ajax: currentUser.ajax
+        });
+        // this gets the data from the device
+        deviceInstance1.getReadings().then((dev1) => {
+            //inserts into html
+            $(".reading1").text(dev1.readings[0].value);
+        }).catch((err) => {
+            //informs you if something went wrong
+            console.log(err);
+        });
     }).catch((err) => {
-        console.log("error, the getMyDevices promise was rejected");
+        console.log(err);
     });
 
     currentUser.getMyGroups().then((response) => {
@@ -46,65 +66,52 @@ RELAYR.authorize().then((currentUser) => {
             $('<ul>').text(x.name).appendTo('.groups');
         });
     }).catch((err) => {
-        console.log("error, the getMyGroups promise was rejected")
+        console.log(err)
     });
 
+    //TRANSMITTER THINGS
     currentUser.getMyTransmitters().then((response) => {
-        allTransmitters = response;
+        let allTransmitters = response;
         // loops through the object holding the devices, x gives you an index
         response.forEach((x) => {
             // tack the object[index].name on to the list displayed in the html
             $('<ul>').text(x.name + " : " + x.id).appendTo('.transmitterlist');
         });
+
+        //set up the transmitter instance
+        let transmitterInstance = new transmitter({
+            id: allTransmitters[0].id,
+            ajax: currentUser.ajax
+        });
+
+        $("#delete").click(function() {
+            //delete the first transmitter in the list
+            transmitterInstance.deleteTransmitter().then(() => {
+                document.location.reload(true);
+            }).catch((err) => {
+                //informs you if something went wrong
+                console.log(err);
+            });
+        });
+
+
+        $("#updateName").click(() => {
+            // update the first transmitter in the list
+            let patchBody = {
+                name: $('.status-box').val()
+            };
+            transmitterInstance.updateTransmitter(patchBody).then((res) => {
+                document.location.reload(true);
+            }).catch((err) => {
+                //informs you if something went wrong
+                console.log(err);
+            });
+        });
     }).catch((err) => {
-        console.log("error, the getMyTransmitters promise was rejected")
+        console.log(err)
     });
 
-    //DEVICE THINGS
-    //set up the device instances
-    let deviceInstance1 = new Device(allDevices[0]);
-    let deviceInstance2 = new Device(allDevices[1]);
 
-    // this gets the data from the devices
-    deviceInstance1.getReadings().then((response) => {
-        //inserts into html
-        $(".reading1").text(dev1);
-    }).catch((err) => {
-        //informs you if something went wrong
-        console.log("error, the dev 1 readings promise was rejected");
-    });
-
-    // this gets the data from the second device
-    deviceInstance2.getReadings().then((response) => {
-        //inserts into html
-        $(".reading2").text(dev1);
-    }).catch((err) => {
-        //informs you if something went wrong
-        console.log("error, the dev 2 readingspromise was rejected");
-    });
-
-    //TRANSMITTER THINGS
-    //set up the transmitter instances
-    let transmitterInstance = new Transmitter(allTransmitters[0]);
-
-    //delete the first transmitter in the list
-    transmitterInstance.deleteTransmitter().then((response) => {
-        location.reload();
-    }).catch((err) => {
-        //informs you if something went wrong
-        console.log("error, the deleteTransmitter promise was rejected");
-    });
-
-    // update the first transmitter in the list
-    let patch = {
-        name: $('.status-box').val()
-    };
-    transmitterInstance.updateTransmitter(patch, true).then((response) => {
-        location.reload();
-    }).catch((err) => {
-        //informs you if something went wrong
-        console.log("error, the updateTransmitter promise was rejected");
-    });
 
 
 });
