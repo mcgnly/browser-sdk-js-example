@@ -46,13 +46,20 @@ RELAYR.authorize().then((currentUser) => {
         }, {
             ajax: currentUser.ajax
         });
-        // this gets the data from the device
+        // this gets the data from the device, updated upon page refresh
         deviceInstance1.getReadings().then((dev1) => {
             //inserts into html
             $(".reading1").text(dev1.readings[0].value);
         }).catch((err) => {
             //informs you if something went wrong
             console.log(err);
+        });
+
+        //this gets you live-updating data from the device, constantly updated
+        scale.connect().then((connection) => {            
+            connection.on('data', (data) => {
+                $(".reading2").text(data.readings[0].value);
+            });
         });
     }).catch((err) => {
         console.log(err);
