@@ -41,7 +41,7 @@ RELAYR.authorize().then((currentUser) => {
         //now that we have the list of devices, we can display the data from the first two
         //set up the device instance
 
-        let deviceInstance1 = new device({
+        let deviceInstance1 = new Device({
             id: allDevices[0].id
         }, {
             ajax: currentUser.ajax
@@ -86,7 +86,7 @@ RELAYR.authorize().then((currentUser) => {
         });
 
         //set up the transmitter instance
-        let transmitterInstance = new transmitter({
+        let transmitterInstance = new Transmitter({
             id: allTransmitters[0].id,
             ajax: currentUser.ajax
         });
