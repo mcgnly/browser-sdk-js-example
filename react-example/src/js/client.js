@@ -2,9 +2,10 @@ import React from "react";
 import ReactDOM from "react-dom";
 import Layout from "./pages/Layout";
 import User from "./pages/User";
-// import Device from "./pages/Device";
-// import Settings from "./pages/Settings";
-
+import Device from "./pages/Device";
+// import Transmitter from "./pages/Transmitter";
+// import Model from "./pages/Model";
+// import Group from "./pages/Group";
 import { Router, Route, IndexRoute, hashHistory } from "react-router";
 // import Bootstrap from "./vendor/bootstrap-without-jquery";
 
@@ -23,15 +24,9 @@ ReactDOM.render(
 		</IndexRoute>
 		<Route path="devices(/:device)" name="devices" component={Device}>
 		</Route>
-		<Route path="transmitters" name="transmitters" component={Transmitter}>
-		</Route>
-		<Route path="models" name="models" component={Model}>
-		</Route>
-		<Route path="groups" name="groups" component={Group}>
-		</Route>
+		
 	</Router>,
     app
 );
 
 
-jdshkfjkdslahljk
