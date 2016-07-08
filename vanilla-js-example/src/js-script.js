@@ -1,7 +1,7 @@
 import relayrSDK, {
-    device, transmitter
+    Device, Transmitter
 }
-from '../relayr-browser-sdk/dist/relayr-browser-sdk.min.js';
+from './relayr-browser-sdk.min.js';
 
 
 //connect to cloud
