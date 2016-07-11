@@ -11,17 +11,16 @@ const RELAYR = relayrSDK;
 RELAYR.init({
     // this comes from the api key page on the dashboard
     //it is important that these be called exactly  "redirectURI" and "id" 
-    //TODO figure out how to get sensitive data back into a seperate file 
     id: "yourIDhere",
     // this identifies my website as a 'trusted user' basically- it expects me to show up and ask for access to stuff
     redirectURI: "http://localhost:3000/dist/front-page.html"
 });
 
 //authorizing redirects you to log in, and returns the current user, whose devices and other things you can then interact with
+//if you already have a token for some reason, you would introduce it by having here instead: RELAYR.authorize('Bearer '+ yourToken).then((currentUser)=>{...})
 RELAYR.authorize().then((currentUser) => {
 
     //USER THINGS
-    //TODO is it better to use this to keep the promise structure consistent, or just get the email property directly from the currentUser?
     currentUser.getUserInfo().then((response) => {
         //inject this text into the html
         $(".users").text(response.email);
