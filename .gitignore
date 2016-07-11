@@ -35,3 +35,10 @@ jspm_packages
 
 # Optional REPL history
 .node_repl_history
+
+# compiled distribution of vanilla
+vanilla-js-example/dist/relayr-example.*
+
+
+# compiled distribution of react
+react-example/src/js/relayr.*
