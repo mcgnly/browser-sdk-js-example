@@ -2,7 +2,7 @@
     "name": "relayr-browser-sdk",
     "version": "2.0.0",
     "description": "The relayr browser sdk",
-    "main": "dist/relayr-browser-sdk.min.js",
+    "main": "src/relayr-browser-sdk.min.js",
     "scripts": {
         "start": "node server.js",
         "test": "NODE_ENV=test mocha --recursive --compilers js:babel-core/register -r mock-local-storage",
