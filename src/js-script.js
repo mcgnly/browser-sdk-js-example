@@ -12,7 +12,7 @@ RELAYR.init({
     // this comes from the api key page on the dashboard
     //it is important that these be called exactly  "redirectURI" and "id" 
     //TODO figure out how to get sensitive data back into a seperate file 
-    id: "yourIdHere",
+    id: "yourIDhere",
     // this identifies my website as a 'trusted user' basically- it expects me to show up and ask for access to stuff
     redirectURI: "http://localhost:3000/dist/front-page.html"
 });
@@ -56,7 +56,7 @@ RELAYR.authorize().then((currentUser) => {
         });
 
         //this gets you live-updating data from the device, constantly updated
-        scale.connect().then((connection) => {            
+        deviceInstance1.connect().then((connection) => {            
             connection.on('data', (data) => {
                 $(".reading2").text(data.readings[0].value);
             });
